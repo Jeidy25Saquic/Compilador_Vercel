@@ -180,19 +180,3 @@ class AnalizadorLexico:
             print("{:<30} {:<20}".format(lex, tipo))
 
 
-if __name__ == "__main__":
-
-    analizador = AnalizadorLexico()
-
-    print("Ingrese el codigo (Enter vacío para terminar):\n")
-
-    entrada = ""
-    while True:
-        linea = input()
-        if linea == "":
-            break
-        entrada += linea + " "
-
-    tokens = analizador.analizar(entrada)
-
-    analizador.mostrar_tabla(tokens)
