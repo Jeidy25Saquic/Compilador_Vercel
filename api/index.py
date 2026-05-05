@@ -5,32 +5,48 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 from flask import Flask, render_template, request, jsonify
+
+# Importar los analizadores
 from Lexico import AnalizadorLexico
 from Sintactico import AnalizadorSintactico
 from semantico import AnalizadorSemantico
 import json
 
-# Rutas absolutas basadas en la ubicación de este archivo
+# Configuración de rutas para Vercel
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
+# Buscar templates y static en las ubicaciones correctas
+template_folder = os.path.join(ROOT_DIR, 'templates')
+static_folder = os.path.join(ROOT_DIR, 'static')
+
+# Si no existen, usar la raíz como fallback
+if not os.path.exists(template_folder):
+    template_folder = ROOT_DIR
+if not os.path.exists(static_folder):
+    static_folder = ROOT_DIR
+
 app = Flask(
     __name__,
-    template_folder=os.path.join(ROOT_DIR, 'templates'),
-    static_folder=os.path.join(ROOT_DIR, 'static'),
+    template_folder=template_folder,
+    static_folder=static_folder,
     static_url_path='/static'
 )
 
+# Inicializar analizadores
 analizador_lexico = AnalizadorLexico()
 
-with open(os.path.join(BASE_DIR, 'tokens.json'), 'r', encoding='utf-8') as f:
-    TOKENS_RESERVADOS = json.load(f)
-
+# Cargar tokens reservados
+tokens_path = os.path.join(BASE_DIR, 'tokens.json')
+try:
+    with open(tokens_path, 'r', encoding='utf-8') as f:
+        TOKENS_RESERVADOS = json.load(f)
+except:
+    TOKENS_RESERVADOS = {}
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/analizar', methods=['POST'])
 def analizar():
@@ -64,7 +80,6 @@ def analizar():
         }
     })
 
-
 @app.route('/analizar-sintactico', methods=['POST'])
 def analizar_sintactico():
     codigo = request.json.get('codigo', '')
@@ -86,7 +101,6 @@ def analizar_sintactico():
         }
 
     return jsonify(respuesta)
-
 
 @app.route('/analizar-semantico', methods=['POST'])
 def analizar_semantico():
@@ -152,16 +166,13 @@ def analizar_semantico():
 
     return jsonify(respuesta)
 
-
 def contar_nodos(nodo):
     return 1 + sum(contar_nodos(h) for h in nodo.hijos)
-
 
 def calcular_profundidad(nodo):
     if not nodo.hijos:
         return 0
     return 1 + max(calcular_profundidad(h) for h in nodo.hijos)
-
 
 def obtener_color_lexico(tipo):
     colores = {
@@ -183,3 +194,6 @@ def obtener_color_lexico(tipo):
         'ERR_INV_TIME': '#ef4444',
     }
     return colores.get(tipo, '#64748b')
+
+if __name__ == '__main__':
+    app.run(debug=True)

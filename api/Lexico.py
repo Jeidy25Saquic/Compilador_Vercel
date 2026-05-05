@@ -9,7 +9,9 @@ class AnalizadorLexico:
 
     def __init__(self):
         try:
-            with open(os.path.join(_DIR, "tokens.json"), "r", encoding="utf-8") as f:
+            # Buscar tokens.json en el mismo directorio que Lexico.py
+            tokens_path = os.path.join(_DIR, "tokens.json")
+            with open(tokens_path, "r", encoding="utf-8") as f:
                 self.tokens = json.load(f)
         except Exception as e:
             print("Error cargando tokens.json:", e)
