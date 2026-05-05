@@ -813,3 +813,15 @@ class AnalizadorSintactico:
         return s
 
 
+if __name__ == "__main__":
+    analizador = AnalizadorSintactico()
+
+    print("Ingrese el codigo (linea vacia para terminar):\n")
+    entrada = ""
+    while True:
+        linea = input()
+        if linea == "":
+            break
+        entrada += linea + "\n"
+
+    analizador.analizar(entrada)

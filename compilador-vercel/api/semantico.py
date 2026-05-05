@@ -684,3 +684,18 @@ class AnalizadorSemantico:
         print("-" * 70)
 
 
+if __name__ == "__main__":
+    sem = AnalizadorSemantico()
+    print("Ingrese el codigo (linea vacia para terminar):\n")
+    entrada = ""
+    while True:
+        linea = input()
+        if linea == "":
+            break
+        entrada += linea + "\n"
+
+    tabla, log, ok, msg, detalle = sem.analizar(entrada)
+    if not ok:
+        print(f"\n[ERROR] {msg}")
+        if detalle:
+            print(f"   {detalle}")

@@ -1,12 +1,15 @@
 import json
 import re
+import os
+
+_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class AnalizadorLexico:
 
     def __init__(self):
         try:
-            with open("tokens.json", "r", encoding="utf-8") as f:
+            with open(os.path.join(_DIR, "tokens.json"), "r", encoding="utf-8") as f:
                 self.tokens = json.load(f)
         except Exception as e:
             print("Error cargando tokens.json:", e)
@@ -180,3 +183,19 @@ class AnalizadorLexico:
             print("{:<30} {:<20}".format(lex, tipo))
 
 
+if __name__ == "__main__":
+
+    analizador = AnalizadorLexico()
+
+    print("Ingrese el codigo (Enter vacío para terminar):\n")
+
+    entrada = ""
+    while True:
+        linea = input()
+        if linea == "":
+            break
+        entrada += linea + " "
+
+    tokens = analizador.analizar(entrada)
+
+    analizador.mostrar_tabla(tokens)
